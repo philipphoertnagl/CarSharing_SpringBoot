@@ -24,6 +24,9 @@ public class UserController {
 
     @PostMapping("/api/users/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
+        if (user.getRole() == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You need to select if the new user is a MANAGER or CUSTOMER");
+        }
         User savedUser = userRepository.saveOrUpdate(user);
 
         if (savedUser.getRole() == User.Role.CUSTOMER) {
