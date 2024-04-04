@@ -1,5 +1,6 @@
 package com.SAMProject.CarSharing.rest;
 
+import com.SAMProject.CarSharing.Entity.CustomerDetails;
 import com.SAMProject.CarSharing.Entity.User;
 import com.SAMProject.CarSharing.dao.UserRepository;
 import com.SAMProject.CarSharing.dto.LoginRequest;
@@ -90,9 +91,15 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token, something wrong (User does not exist?!)");
         }
+        User existingUser = userRepository.findById(id);
         updatedUser.setId(id);
-        updatedUser.setRole(userRepository.findById(id).getRole());
+        updatedUser.setRole(existingUser.getRole());
+        // Save CustomerDetails of updated Customer:
+        CustomerDetails updatedDetails = updatedUser.getCustomerDetails(); //to not have to send the role info in the JSON body again
         if (user.getRole().equals(User.Role.MANAGER) || user.getId() == id) {
+            if (updatedUser.getRole() == User.Role.CUSTOMER) {
+                updatedUser.setCustomerDetails(updatedDetails); //set customerDetails from updated Customer
+            }
             userRepository.saveOrUpdate(updatedUser);
             return ResponseEntity.ok().body("User: " + updatedUser.getUsername() + " updated");
         } else {

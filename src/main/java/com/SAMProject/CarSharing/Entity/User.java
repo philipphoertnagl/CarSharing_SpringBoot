@@ -57,12 +57,7 @@ public class User {
     }
 
     public void setCustomerDetails(CustomerDetails customerDetails) {
-        if (role == Role.CUSTOMER) {
-            this.customerDetails = customerDetails;
-        }
-       else {
-           this.customerDetails = null;
-        }
+        this.customerDetails = customerDetails;
     }
 
     @Override
