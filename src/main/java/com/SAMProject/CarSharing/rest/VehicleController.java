@@ -9,10 +9,9 @@ import com.SAMProject.CarSharing.security.TokenStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class VehicleController {
@@ -43,6 +42,32 @@ public class VehicleController {
         else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Managers can registrate new Vehicles");
         }
+    }
 
+    @GetMapping("api/vehicles")
+    public ResponseEntity<?> returnAllVehicles(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String username = TokenStorage.getUsernameForToken(token);
+
+        if (username != null && userRepository.findByUsername(username).getRole().equals(User.Role.MANAGER)) {
+            List<Vehicle> allVehicles = vehicleRepository.allVehicles();
+            return ResponseEntity.ok(allVehicles);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Managers can see all Vehicles");
+        }
+    }
+
+    @PutMapping("/api/vehicles/{id}")
+    public ResponseEntity<?> updateVehicle(@PathVariable Integer id, @RequestBody Vehicle updatedVehicle, @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String username = TokenStorage.getUsernameForToken(token);
+        User user = userRepository.findByUsername(username);
+        if (user == null || user.getRole() != User.Role.MANAGER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid token, something wrong (User does not exist?!)");
+        }
+        updatedVehicle.setId(id);
+        Vehicle newUpdatedVehicle = vehicleRepository.save(updatedVehicle);
+        System.out.println(newUpdatedVehicle);
+        return ResponseEntity.ok().body("Vehicle: " + updatedVehicle.getName() + " updated");
     }
 }
