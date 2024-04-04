@@ -9,6 +9,21 @@ public class Vehicle {
     public Vehicle() {
     }
 
+    public Vehicle(String name, String description, StatusDetails statusDetails) {
+        this.name = name;
+        this.description = description;
+        this.statusDetails = statusDetails;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getName() {
         return name;
     }
@@ -37,6 +52,7 @@ public class Vehicle {
     public String toString() {
         return "Vehicle{" +
                 "name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", id=" + id +
                 ", statusDetails=" + statusDetails +
                 '}';

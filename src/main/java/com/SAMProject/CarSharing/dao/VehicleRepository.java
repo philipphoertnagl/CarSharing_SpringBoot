@@ -37,4 +37,8 @@ public class VehicleRepository {
 
         }
     }
+
+    public List<Vehicle> allVehicles() {
+        return new ArrayList<>(vehicleList);
+    }
 }

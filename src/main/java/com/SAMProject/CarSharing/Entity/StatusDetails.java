@@ -17,14 +17,16 @@ public class StatusDetails {
         OUT_OF_ORDER;
     }
 
-    public StatusDetails(double longitude, double latitude, LocalDateTime currentTimeStamp, OccupyState occupyState, String currentDriver, long distanceSinceLastUpdate, long timeSinceLastUpdate) {
+
+//Für Registrierung neuer Autos
+    public StatusDetails() {
         this.longitude = longitude;
         this.latitude = latitude;
-        this.currentTimeStamp = currentTimeStamp;
-        this.occupyState = occupyState;
-        this.currentDriver = currentDriver;
-        this.distanceSinceLastUpdate = distanceSinceLastUpdate;
-        this.timeSinceLastUpdate = timeSinceLastUpdate;
+        this.currentTimeStamp = LocalDateTime.now();
+        this.occupyState = OccupyState.FREE;
+        this.currentDriver = null;
+        this.distanceSinceLastUpdate = 0;
+        this.timeSinceLastUpdate = 0;
     }
 
     public double getLongitude() {
