@@ -1,6 +1,7 @@
 package com.SAMProject.CarSharing.dao;
 
 
+import com.SAMProject.CarSharing.Entity.User;
 import com.SAMProject.CarSharing.Entity.Vehicle;
 import org.springframework.stereotype.Component;
 
@@ -40,5 +41,21 @@ public class VehicleRepository {
 
     public List<Vehicle> allVehicles() {
         return new ArrayList<>(vehicleList);
+    }
+
+    public void deleteVehicle(int id) {
+        Vehicle removingVehicle = findById(id);
+        if (removingVehicle != null) {
+            vehicleList.remove(removingVehicle);
+        }
+    }
+
+    public Vehicle findById(int id) {
+        for (Vehicle vehicle : vehicleList) {
+            if (vehicle.getId() == id) {
+                return vehicle;
+            }
+        }
+        return null;
     }
 }

@@ -38,8 +38,7 @@ public class VehicleController {
             Vehicle newVehicle = vehicleRepository.save(vehicle);
             System.out.println(newVehicle);
             return ResponseEntity.ok(newVehicle);
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Managers can registrate new Vehicles");
         }
     }
@@ -70,4 +69,19 @@ public class VehicleController {
         System.out.println(newUpdatedVehicle);
         return ResponseEntity.ok().body("Vehicle: " + updatedVehicle.getName() + " updated");
     }
+
+    @DeleteMapping("api/vehicles/{id}")
+    public ResponseEntity<?> deleteVehicle(@PathVariable Integer id, @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String username = TokenStorage.getUsernameForToken(token);
+        User user = userRepository.findByUsername(username);
+        if (user == null || user.getRole() != User.Role.MANAGER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid token, something wrong (User does not exist?!)");
+        } else {
+            vehicleRepository.deleteVehicle(id);
+            System.out.println("Vehicle with ID: " + id + "from List deleted");
+            return ResponseEntity.ok().body("Vehicle with ID: " + id + " from List deleted");
+        }
+    }
+
 }
