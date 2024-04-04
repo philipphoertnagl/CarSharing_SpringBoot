@@ -92,7 +92,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token, something wrong (User does not exist?!)");
         }
         User existingUser = userRepository.findById(id);
-        updatedUser.setId(id);
+        updatedUser.setId(id);  //!wichtig!
         updatedUser.setRole(existingUser.getRole());
         // Save CustomerDetails of updated Customer:
         CustomerDetails updatedDetails = updatedUser.getCustomerDetails(); //to not have to send the role info in the JSON body again
