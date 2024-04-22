@@ -1,10 +1,9 @@
 package com.SAMProject.CarSharing.rest;
 
-import com.SAMProject.CarSharing.Entity.StatusDetails;
-import com.SAMProject.CarSharing.Entity.User;
-import com.SAMProject.CarSharing.Entity.Vehicle;
-import com.SAMProject.CarSharing.dao.UserRepository;
-import com.SAMProject.CarSharing.dao.VehicleRepository;
+import com.SAMProject.CarSharing.persistence.entity.User;
+import com.SAMProject.CarSharing.persistence.entity.Vehicle;
+import com.SAMProject.CarSharing.persistence.repository.UserRepository;
+import com.SAMProject.CarSharing.persistence.repository.VehicleRepository;
 import com.SAMProject.CarSharing.security.TokenStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

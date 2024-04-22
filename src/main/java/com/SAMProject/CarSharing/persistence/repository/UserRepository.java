@@ -1,7 +1,7 @@
-package com.SAMProject.CarSharing.dao;
+package com.SAMProject.CarSharing.persistence.repository;
 
 
-import com.SAMProject.CarSharing.Entity.User;
+import com.SAMProject.CarSharing.persistence.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
