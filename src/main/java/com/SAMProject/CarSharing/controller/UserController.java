@@ -1,4 +1,4 @@
-package com.SAMProject.CarSharing.rest;
+package com.SAMProject.CarSharing.controller;
 
 import com.SAMProject.CarSharing.persistence.entity.CustomerDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
@@ -6,6 +6,7 @@ import com.SAMProject.CarSharing.persistence.repository.UserRepository;
 import com.SAMProject.CarSharing.dto.LoginRequest;
 import com.SAMProject.CarSharing.security.TokenStorage;
 import com.SAMProject.CarSharing.security.TokenUtil;
+import com.SAMProject.CarSharing.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,30 +18,16 @@ import java.util.List;
 @RestController
 public class UserController {
     private final UserRepository userRepository;
-
+    private final UserService userService;
     @Autowired
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @PostMapping("/api/users/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-        if (user.getRole() == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You need to select if the new user is a MANAGER or CUSTOMER");
-        }
-        User savedUser = userRepository.saveOrUpdate(user);
-
-        if (savedUser.getRole() == User.Role.CUSTOMER) {
-            System.out.println("New Customer registered: "
-                    + savedUser.getUsername()
-                    + " Details: " + savedUser.getCustomerDetails().toString());
-
-        } else if (savedUser.getRole() == User.Role.MANAGER) {
-            System.out.println("New Fleet Manager registered: "
-                    + " Username: " + savedUser.getUsername()
-                    + " Password: " + savedUser.getPassword());
-        }
-        return ResponseEntity.ok(savedUser);
+        return userService.registerUser(user);
     }
 
     @PostMapping("/api/users/login")

@@ -1,4 +1,4 @@
-package com.SAMProject.CarSharing.rest;
+package com.SAMProject.CarSharing.controller;
 
 import com.SAMProject.CarSharing.persistence.entity.User;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
