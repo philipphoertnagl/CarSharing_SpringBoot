@@ -1,4 +1,4 @@
-package com.SAMProject.CarSharing.Entity;
+package com.SAMProject.CarSharing.persistence.entity;
 
 import java.time.LocalDateTime;
 

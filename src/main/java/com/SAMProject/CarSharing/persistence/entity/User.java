@@ -1,4 +1,4 @@
-package com.SAMProject.CarSharing.Entity;
+package com.SAMProject.CarSharing.persistence.entity;
 
 public class User {
     private String username;

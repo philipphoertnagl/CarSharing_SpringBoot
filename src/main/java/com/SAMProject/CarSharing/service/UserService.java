@@ -1,29 +1,33 @@
-package com.SAMProject.CarSharing.rest;
+package com.SAMProject.CarSharing.service;
 
-import com.SAMProject.CarSharing.Entity.CustomerDetails;
-import com.SAMProject.CarSharing.Entity.User;
-import com.SAMProject.CarSharing.dao.UserRepository;
 import com.SAMProject.CarSharing.dto.LoginRequest;
+import com.SAMProject.CarSharing.persistence.entity.CustomerDetails;
+import com.SAMProject.CarSharing.persistence.entity.User;
+import com.SAMProject.CarSharing.persistence.repository.UserRepository;
 import com.SAMProject.CarSharing.security.TokenStorage;
 import com.SAMProject.CarSharing.security.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Collections;
 import java.util.List;
 
-@RestController
-public class UserController {
+@Service
+public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/api/users/register")
+
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         if (user.getRole() == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You need to select if the new user is a MANAGER or CUSTOMER");
@@ -43,7 +47,6 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
-    @PostMapping("/api/users/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
         if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
@@ -56,7 +59,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/api/users/logout")
     public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String authHeader) {
         //token sent in the authorization header  with "Bearer "
         String token = authHeader.substring(7); // Remove "Bearer " prefix
@@ -70,7 +72,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/api/users")
     public ResponseEntity<?> returnAllUser(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
@@ -83,7 +84,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("api/users/{id}")
+
     public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody User updatedUser, @RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
@@ -106,4 +107,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update this user.(Only manager can change other users data");
         }
     }
+
 }

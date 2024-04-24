@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registration Success</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>Registration Successful!</h1>
+    <!-- Display the success message with the user's name -->
+    <h2 th:text="'Successfully registered ' + ${username}">Successfully registered User</h2>
+    <a href="/register" class="btn btn-primary">Go to Home</a>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
