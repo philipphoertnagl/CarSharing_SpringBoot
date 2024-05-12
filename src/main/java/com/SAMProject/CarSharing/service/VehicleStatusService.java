@@ -30,10 +30,14 @@ public class VehicleStatusService {
         this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<?> sendStatus(Integer id, StatusDetails statusDetails) { //TODO: add vehicle-token authorization
+    public ResponseEntity<?> sendStatus(Integer id, StatusDetails statusDetails, String authHeader) {
+        String vehicleToken = authHeader.substring(7);
         Vehicle vehicle = vehicleRepository.findById(id);
         if (vehicle == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle ID not found");
+        }
+        if(!vehicle.getVehicleToken().equals(vehicleToken)) {       //checking for matching VehicleToken!
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vehicle Token not matching with Token of VehicleID");
         }
         vehicle.setStatusDetails(statusDetails);
         processStatusUpdate(statusDetails);
@@ -41,10 +45,14 @@ public class VehicleStatusService {
         return ResponseEntity.ok().body("Vehicle: " + vehicle.getName() + " has new Status: " + vehicle.getStatusDetails());
     }
 
-    public ResponseEntity<?> sendAlarm(Integer id, EmergencyInfo emergencyInfo) { //TODO: add vehicle-token authorization
+    public ResponseEntity<?> sendAlarm(Integer id, EmergencyInfo emergencyInfo, String authHeader) {
+        String vehicleToken = authHeader.substring(7);
         Vehicle vehicle = vehicleRepository.findById(id);
         if (vehicle == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle ID not found");
+        }
+        if(!vehicle.getVehicleToken().equals(vehicleToken)) {       //checking for matching VehicleToken!
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vehicle Token not matching with Token of VehicleID");
         }
         StatusDetails currentStatus = vehicle.getStatusDetails();
         EmergencyDetails emergencyDetails = new EmergencyDetails(currentStatus, emergencyInfo.getPriority(), emergencyInfo.getEmergencyDescription());

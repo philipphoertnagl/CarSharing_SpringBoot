@@ -43,7 +43,7 @@ public class RabbitMQConfig {
     @Bean
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
-        rabbitTemplate.setDefaultReceiveQueue(UPDATE_STATUS_QUEUE);     //TODO
+        rabbitTemplate.setDefaultReceiveQueue(UPDATE_STATUS_QUEUE);
         return rabbitTemplate;
     }
 

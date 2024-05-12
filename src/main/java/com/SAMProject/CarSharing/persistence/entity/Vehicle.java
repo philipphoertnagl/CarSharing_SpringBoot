@@ -5,6 +5,7 @@ public class Vehicle {
     private String description;
     private int id;
     private StatusDetails statusDetails;
+    private String vehicleToken;
 
     public Vehicle() {
     }
@@ -46,6 +47,14 @@ public class Vehicle {
 
     public void setStatusDetails(StatusDetails statusDetails) {
         this.statusDetails = statusDetails;
+    }
+
+    public String getVehicleToken() {
+        return vehicleToken;
+    }
+
+    public void setVehicleToken(String vehicleToken) {
+        this.vehicleToken = vehicleToken;
     }
 
     @Override
