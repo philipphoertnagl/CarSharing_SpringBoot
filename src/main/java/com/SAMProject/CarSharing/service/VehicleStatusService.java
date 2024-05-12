@@ -6,6 +6,8 @@ import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
 import com.SAMProject.CarSharing.persistence.repository.UserRepository;
 import com.SAMProject.CarSharing.persistence.repository.VehicleRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,14 +21,16 @@ public class VehicleStatusService {
 
     private final VehicleRepository vehicleRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final ObjectMapper objectMapper; //for RabbitMQ SimpleMessageConverter to convert to simple JSON
 
     @Autowired
-    public VehicleStatusService(VehicleRepository vehicleRepository, RabbitTemplate rabbitTemplate) {
+    public VehicleStatusService(VehicleRepository vehicleRepository, RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
         this.vehicleRepository = vehicleRepository;
         this.rabbitTemplate = rabbitTemplate;
+        this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<?> sendStatus(@PathVariable Integer id, @RequestBody StatusDetails statusDetails) { //TODO: add vehicle-token authorization
+    public ResponseEntity<?> sendStatus(Integer id, StatusDetails statusDetails) { //TODO: add vehicle-token authorization
         Vehicle vehicle = vehicleRepository.findById(id);
         if (vehicle == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle ID not found");
@@ -37,7 +41,7 @@ public class VehicleStatusService {
         return ResponseEntity.ok().body("Vehicle: " + vehicle.getName() + " has new Status: " + vehicle.getStatusDetails());
     }
 
-    public ResponseEntity<?> sendAlarm(@PathVariable Integer id, @RequestBody EmergencyInfo emergencyInfo) { //TODO: add vehicle-token authorization
+    public ResponseEntity<?> sendAlarm(Integer id, EmergencyInfo emergencyInfo) { //TODO: add vehicle-token authorization
         Vehicle vehicle = vehicleRepository.findById(id);
         if (vehicle == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle ID not found");
@@ -50,10 +54,23 @@ public class VehicleStatusService {
     }
 
     public void processStatusUpdate(StatusDetails statusDetails) {
-        rabbitTemplate.convertAndSend("UpdateStatusQueue", statusDetails);
+        try {
+            String toJson = objectMapper.writeValueAsString(statusDetails); //for SimpleMessageConverter in RabbitMQ
+            rabbitTemplate.convertAndSend("UpdateStatusQueue", toJson);
+        } catch (JsonProcessingException e) {
+            System.out.println("Problem with converting Object to JSON format (Objectmapper)");
+        }
+
+
     }
 
     public void processEmergencyAlarm(EmergencyDetails emergencyDetails) {
-        rabbitTemplate.convertAndSend("EmergencyQueue", emergencyDetails);
+        try {
+            String toJson = objectMapper.writeValueAsString(emergencyDetails);
+            rabbitTemplate.convertAndSend("EmergencyQueue", toJson);
+        } catch (JsonProcessingException e) {
+            System.out.println("Problem with converting Object to JSON format (Objectmapper)");
+        }
     }
+
 }
