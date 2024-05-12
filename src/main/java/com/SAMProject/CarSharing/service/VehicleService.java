@@ -43,8 +43,9 @@ public class VehicleService {
             System.out.println(newVehicle);
             //vehicleToken:
             String vehicleToken = TokenUtil.generateToken();
-            TokenStorage.storeVehicleToken(vehicleToken, newVehicle.getId());
-            System.out.println("VehicleToken of vehicle ID " + newVehicle.getId() + " is: " + vehicleToken);
+            newVehicle.setVehicleToken(vehicleToken);
+
+            System.out.println("VehicleToken of vehicle ID " + newVehicle.getId() + " is: " + newVehicle.getVehicleToken());
             return ResponseEntity.ok(newVehicle + "\n The vehicle Token generated is : " + vehicleToken);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Managers can registrate new Vehicles");

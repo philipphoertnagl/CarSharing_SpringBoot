@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TokenStorage {
     private static final ConcurrentHashMap<String, String> tokenUserMap = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, Integer> tokenVehicleMap = new ConcurrentHashMap<>();
+
 
     public static void storeToken(String token, String username) {
         tokenUserMap.put(token, username);
@@ -18,11 +18,5 @@ public class TokenStorage {
 
     public static void removeToken(String token) {
         tokenUserMap.remove(token);
-    }
-
-
-    //VehicleToken:
-    public static void storeVehicleToken(String token, Integer vehicleID) {
-        tokenVehicleMap.put(token, vehicleID);
     }
 }

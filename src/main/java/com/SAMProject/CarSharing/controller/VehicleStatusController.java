@@ -6,10 +6,7 @@ import com.SAMProject.CarSharing.service.VehicleService;
 import com.SAMProject.CarSharing.service.VehicleStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class VehicleStatusController {
@@ -22,12 +19,12 @@ public class VehicleStatusController {
     }
 
     @PostMapping("api/devices/{id}/status")
-    public ResponseEntity<?> sendStatus(@PathVariable Integer id, @RequestBody StatusDetails statusDetails) {
-        return vehicleStatusService.sendStatus(id, statusDetails);
+    public ResponseEntity<?> sendStatus(@PathVariable Integer id, @RequestBody StatusDetails statusDetails, @RequestHeader("Authorization") String authHeader) {
+        return vehicleStatusService.sendStatus(id, statusDetails, authHeader);
     }
 
     @PostMapping("api/devices/{id}/alarm")
-    public ResponseEntity<?> sendAlarm(@PathVariable Integer id, @RequestBody EmergencyInfo emergencyInfo) { //TODO: add vehicle-token authorization
-        return vehicleStatusService.sendAlarm(id, emergencyInfo);
+    public ResponseEntity<?> sendAlarm(@PathVariable Integer id, @RequestBody EmergencyInfo emergencyInfo, @RequestHeader("Authorization") String authHeader) {
+        return vehicleStatusService.sendAlarm(id, emergencyInfo, authHeader);
     }
 }
