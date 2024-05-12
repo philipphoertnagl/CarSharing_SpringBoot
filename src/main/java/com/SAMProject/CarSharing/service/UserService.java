@@ -28,7 +28,7 @@ public class UserService {
     }
 
 
-    public ResponseEntity<?> registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(User user) {
         if (user.getRole() == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You need to select if the new user is a MANAGER or CUSTOMER");
         }
@@ -47,7 +47,7 @@ public class UserService {
         return ResponseEntity.ok(savedUser);
     }
 
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> loginUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
         if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
             String token = TokenUtil.generateToken();
@@ -59,7 +59,7 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> logoutUser(String authHeader) {
         //token sent in the authorization header  with "Bearer "
         String token = authHeader.substring(7); // Remove "Bearer " prefix
         String username = TokenStorage.getUsernameForToken(token);
@@ -72,7 +72,7 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<?> returnAllUser(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> returnAllUser(String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
 
@@ -85,7 +85,7 @@ public class UserService {
     }
 
 
-    public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody User updatedUser, @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> updateUser(Integer id, User updatedUser, String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
         User user = userRepository.findByUsername(username);

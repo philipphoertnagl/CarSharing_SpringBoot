@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class VehicleStatusController {
 
     private final VehicleStatusService vehicleStatusService;
+
     @Autowired
     public VehicleStatusController(VehicleStatusService vehicleStatusService) {
         this.vehicleStatusService = vehicleStatusService;

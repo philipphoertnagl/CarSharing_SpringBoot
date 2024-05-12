@@ -6,6 +6,7 @@ import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
 import com.SAMProject.CarSharing.persistence.repository.UserRepository;
 import com.SAMProject.CarSharing.persistence.repository.VehicleRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class VehicleStatusService {
 
     private final VehicleRepository vehicleRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public VehicleStatusService(VehicleRepository vehicleRepository) {
+    public VehicleStatusService(VehicleRepository vehicleRepository, RabbitTemplate rabbitTemplate) {
         this.vehicleRepository = vehicleRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public ResponseEntity<?> sendStatus(@PathVariable Integer id, @RequestBody StatusDetails statusDetails) { //TODO: add vehicle-token authorization
@@ -29,6 +32,7 @@ public class VehicleStatusService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle ID not found");
         }
         vehicle.setStatusDetails(statusDetails);
+        processStatusUpdate(statusDetails);
         System.out.println("Vehicle: " + vehicle.getName() + " has new Status: " + vehicle.getStatusDetails());
         return ResponseEntity.ok().body("Vehicle: " + vehicle.getName() + " has new Status: " + vehicle.getStatusDetails());
     }
@@ -40,7 +44,16 @@ public class VehicleStatusService {
         }
         StatusDetails currentStatus = vehicle.getStatusDetails();
         EmergencyDetails emergencyDetails = new EmergencyDetails(currentStatus, emergencyInfo.getPriority(), emergencyInfo.getEmergencyDescription());
+        processEmergencyAlarm(emergencyDetails);
         System.out.println("Emergency Details sent: " + emergencyDetails);
         return ResponseEntity.ok().body("Emergency Details sent: " + emergencyDetails);
+    }
+
+    public void processStatusUpdate(StatusDetails statusDetails) {
+        rabbitTemplate.convertAndSend("UpdateStatusQueue", statusDetails);
+    }
+
+    public void processEmergencyAlarm(EmergencyDetails emergencyDetails) {
+        rabbitTemplate.convertAndSend("EmergencyQueue", emergencyDetails);
     }
 }
