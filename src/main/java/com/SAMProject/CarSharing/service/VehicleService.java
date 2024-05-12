@@ -30,7 +30,7 @@ public class VehicleService {
         this.vehicleRepository = vehicleRepository;
     }
 
-    public ResponseEntity<?> registerVehicle(@RequestBody Vehicle vehicle, @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> registerVehicle(Vehicle vehicle, String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
         User user = userRepository.findByUsername(username);
@@ -47,7 +47,7 @@ public class VehicleService {
     }
 
 
-    public ResponseEntity<?> returnAllVehicles(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> returnAllVehicles(String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
 
@@ -59,7 +59,7 @@ public class VehicleService {
         }
     }
 
-    public ResponseEntity<?> updateVehicle(@PathVariable Integer id, @RequestBody Vehicle updatedVehicle, @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> updateVehicle(Integer id, Vehicle updatedVehicle, String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
         User user = userRepository.findByUsername(username);
@@ -72,7 +72,7 @@ public class VehicleService {
         return ResponseEntity.ok().body("Vehicle: " + updatedVehicle.getName() + " updated");
     }
 
-    public ResponseEntity<?> deleteVehicle(@PathVariable Integer id, @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> deleteVehicle( Integer id, String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
         User user = userRepository.findByUsername(username);
