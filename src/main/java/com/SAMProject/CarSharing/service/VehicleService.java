@@ -9,6 +9,7 @@ import com.SAMProject.CarSharing.persistence.entity.Vehicle;
 import com.SAMProject.CarSharing.persistence.repository.UserRepository;
 import com.SAMProject.CarSharing.persistence.repository.VehicleRepository;
 import com.SAMProject.CarSharing.security.TokenStorage;
+import com.SAMProject.CarSharing.security.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,11 @@ public class VehicleService {
             }
             Vehicle newVehicle = vehicleRepository.save(vehicle);
             System.out.println(newVehicle);
-            return ResponseEntity.ok(newVehicle);
+            //vehicleToken:
+            String vehicleToken = TokenUtil.generateToken();
+            TokenStorage.storeVehicleToken(vehicleToken, newVehicle.getId());
+            System.out.println("VehicleToken of vehicle ID " + newVehicle.getId() + " is: " + vehicleToken);
+            return ResponseEntity.ok(newVehicle + "\n The vehicle Token generated is : " + vehicleToken);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Managers can registrate new Vehicles");
         }
