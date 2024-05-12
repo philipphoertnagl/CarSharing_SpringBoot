@@ -1,6 +1,7 @@
 package com.SAMProject.CarSharing.service;
 
 
+import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
 import com.SAMProject.CarSharing.persistence.repository.UserRepository;
@@ -80,6 +81,13 @@ public class VehicleService {
             System.out.println("Vehicle with ID: " + id + "from List deleted");
             return ResponseEntity.ok().body("Vehicle with ID: " + id + " from List deleted");
         }
+    }
+
+    public ResponseEntity<?> sendStatus(@PathVariable Integer id, @RequestBody StatusDetails statusDetails) { //TODO: add vehicle-token authorization
+        Vehicle vehicle = vehicleRepository.findById(id);
+        vehicle.setStatusDetails(statusDetails);
+        System.out.println("Vehicle: " + vehicle.getName() + " has new Status: " + vehicle.getStatusDetails());
+        return ResponseEntity.ok().body("Vehicle: " + vehicle.getName() + " has new Status: " + vehicle.getStatusDetails());
     }
 
 }

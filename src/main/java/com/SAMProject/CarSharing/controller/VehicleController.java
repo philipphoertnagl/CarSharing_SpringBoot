@@ -1,5 +1,6 @@
 package com.SAMProject.CarSharing.controller;
 
+import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
 import com.SAMProject.CarSharing.persistence.repository.UserRepository;
