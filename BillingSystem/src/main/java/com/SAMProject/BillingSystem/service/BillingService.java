@@ -12,13 +12,12 @@ public class BillingService {
 
     @RabbitListener(queues = "UpdateStatusQueue")
     public void receiveUpdateStatusMessage(String message) throws InterruptedException {
-        Thread.sleep(3000); //for debuggin in RabbitMQ server interface (check delivery)
+        //Thread.sleep(3000); //for debuggin in RabbitMQ server interface (check delivery)
         log.info("Received message from UpdateStatusQueue: {}", message);
     }
 
     @RabbitListener(queues = "EmergencyQueue")
     public void receiveEmergencyMessage(String message) throws InterruptedException {
-        Thread.sleep(3000);
         log.info("Received message from EmergencyQueue: {}", message);
     }
 }
