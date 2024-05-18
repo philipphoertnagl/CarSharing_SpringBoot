@@ -1,5 +1,6 @@
 package com.SAMProject.CarSharing.controller;
 
+import com.SAMProject.CarSharing.dto.UsernameOccupyVehicle;
 import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
@@ -19,6 +20,7 @@ import java.util.List;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+
     @Autowired
     public VehicleController(VehicleService vehicleService) {
         this.vehicleService = vehicleService;
@@ -44,4 +46,8 @@ public class VehicleController {
         return vehicleService.deleteVehicle(id, authHeader);
     }
 
+    @PostMapping("api/vehicles/{vehicleID}")
+    public ResponseEntity<?> occupyVehicle(@PathVariable Integer vehicleID, @RequestBody UsernameOccupyVehicle request) {
+        return vehicleService.occupyVehicle(vehicleID, request.getUsername());
+    }
 }
