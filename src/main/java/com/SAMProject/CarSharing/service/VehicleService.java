@@ -91,4 +91,27 @@ public class VehicleService {
         }
     }
 
+
+    public ResponseEntity<?> occupyVehicle(Integer vehicleID, String username) {
+        //check for the User who wants to select a vehicle
+        User user = userRepository.findByUsername(username); // because of JSON parsing as raw String needed a new DTO
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid ID - this user does not exist)");
+        }
+        //figure out which vehicle he wants to choose (by enterin the vehicleID
+        Vehicle vehicle = vehicleRepository.findById(vehicleID);
+        if (vehicle == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle ID not found");
+        } else {
+            //process so that other fields of statusDetails do not get overwritten or set to 0 NULL
+            StatusDetails existingStatusDetails = vehicle.getStatusDetails();
+            existingStatusDetails.setOccupyState(StatusDetails.OccupyState.OCCUPIED);
+            existingStatusDetails.setCurrentDriver(user);
+            vehicle.setStatusDetails(existingStatusDetails);
+            vehicleRepository.save(vehicle); //TODO: eig nicht gebraucht, aber vlt später wenn DBS
+        }
+        System.out.println(user.getUsername() + " rented the car " + vehicle.getName() + " with ID " + vehicle.getId() + " and the details " + vehicle.getStatusDetails());
+        return ResponseEntity.ok().body("Vehicle with ID: " + vehicleID + " was rented by User " + user.getUsername() + " wih User ID: " + user.getId());
+    }
+
 }

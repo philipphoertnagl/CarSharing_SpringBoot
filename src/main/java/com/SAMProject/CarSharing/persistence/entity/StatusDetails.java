@@ -7,7 +7,7 @@ public class StatusDetails {
     private double latitude;
     private LocalDateTime currentTimeStamp;
     private OccupyState occupyState;
-    private String currentDriver;
+    private User currentDriver;
     private long distanceSinceLastUpdate;
     private long timeSinceLastUpdate;       //in sec
 
@@ -27,6 +27,13 @@ public class StatusDetails {
         this.currentDriver = null;
         this.distanceSinceLastUpdate = 0;
         this.timeSinceLastUpdate = 0;
+    }
+
+    //für occupyVehicle method in VehicleService:
+
+    public StatusDetails(OccupyState occupyState, User currentDriver) {
+        this.occupyState = occupyState;
+        this.currentDriver = currentDriver;
     }
 
     public double getLongitude() {
@@ -61,11 +68,11 @@ public class StatusDetails {
         this.occupyState = occupyState;
     }
 
-    public String getCurrentDriver() {
+    public User getCurrentDriver() {
         return currentDriver;
     }
 
-    public void setCurrentDriver(String currentDriver) {
+    public void setCurrentDriver(User currentDriver) {
         this.currentDriver = currentDriver;
     }
 

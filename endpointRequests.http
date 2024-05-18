@@ -27,11 +27,11 @@ Content-Type: application/json
 # Request for REGISTERING a new VEHICLE (requires Manager token!)
 POST http://localhost:8080/api/vehicles
 Content-Type: application/json
-Authorization: Bearer 01e3fc5f-4de4-4693-951b-a2e7d25250d5
+Authorization: Bearer b3496e33-59df-430e-a4ef-995ed5ea0a98
 
 
 {
-  "name": "Opel",
+  "name": "Porsche",
   "description": "Familienwagen",
   "statusDetails": {
     "longitude": 48.239189,
@@ -46,7 +46,7 @@ Authorization: Bearer 01e3fc5f-4de4-4693-951b-a2e7d25250d5
 
 POST http://localhost:8080/api/devices/1/status
 Content-Type: application/json
-Authorization: Bearer 8446f000-b4c4-45a5-8b0b-55fc8f44055a
+Authorization: Bearer f4bc273f-81cd-413f-83e6-85e6964a1c22
 
 {
         "longitude": 48.239189,
@@ -81,3 +81,14 @@ POST http://localhost:8080/api/invoices/1
 Content-Type: application/json
 Authorization: Bearer ba459e2f-1d14-420d-8fe5-5d47e33cfe08
 
+
+###
+
+# Endpoint for occupying a vehicle
+
+POST http://localhost:8080/api/vehicles/1
+Content-Type: application/json
+
+{
+  "username": "admin"
+}
