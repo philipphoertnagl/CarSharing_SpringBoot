@@ -1,0 +1,73 @@
+# Sending Http Requests for testing CarSharing Projectinstead of using Postman
+
+# Request for REGISTERING a new user (specify MANAGER or CUSTOMER in role
+POST http://localhost:8080/api/users/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "pw123",
+  "role": "MANAGER"
+}
+
+###
+
+# Request for LOGGING in a Manager (for CUSTOMER the JSON body needs to be adapted)
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "pw123"
+}
+
+
+###
+
+# Request for REGISTERING a new VEHICLE (requires Manager token!)
+POST http://localhost:8080/api/vehicles
+Content-Type: application/json
+Authorization: Bearer 01e3fc5f-4de4-4693-951b-a2e7d25250d5
+
+
+{
+  "name": "Opel",
+  "description": "Familienwagen",
+  "statusDetails": {
+    "longitude": 48.239189,
+    "latitude": 16.376901
+  }
+}
+
+###
+
+
+# Vehicle sends its STATUS (requires Vehicle token returned at registerVehicle)
+
+POST http://localhost:8080/api/devices/1/status
+Content-Type: application/json
+Authorization: Bearer 8446f000-b4c4-45a5-8b0b-55fc8f44055a
+
+{
+        "longitude": 48.239189,
+        "latitude": 16.376901,
+        "currentTimeStamp": "2024-05-12T12:58:26.274216887",
+        "occupyState": "FREE",
+        "currentDriver": null,
+        "distanceSinceLastUpdate": 4500,
+        "timeSinceLastUpdate": 1111
+}
+
+###
+
+
+# Vehicle sends an ALARM (requires Vehicle token returned at registerVehicle)
+
+POST http://localhost:8080/api/devices/1/alarm
+Content-Type: application/json
+Authorization: Bearer 8446f000-b4c4-45a5-8b0b-55fc8f44055a
+
+{
+  "priority": "HIGH",
+  "emergencyDescription": "I hun an Unfall heast!"
+}
