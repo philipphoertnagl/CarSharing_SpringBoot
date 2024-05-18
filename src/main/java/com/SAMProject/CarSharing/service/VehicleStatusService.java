@@ -1,6 +1,7 @@
 package com.SAMProject.CarSharing.service;
 
 import com.SAMProject.CarSharing.dto.EmergencyInfo;
+import com.SAMProject.CarSharing.persistence.entity.BillingInvoice;
 import com.SAMProject.CarSharing.persistence.entity.EmergencyDetails;
 import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
