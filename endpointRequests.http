@@ -71,3 +71,13 @@ Authorization: Bearer 8446f000-b4c4-45a5-8b0b-55fc8f44055a
   "priority": "HIGH",
   "emergencyDescription": "I hun an Unfall heast!"
 }
+
+
+###
+
+# Generating the Invoice Queue Request
+
+POST http://localhost:8080/api/invoices/1
+Content-Type: application/json
+Authorization: Bearer ba459e2f-1d14-420d-8fe5-5d47e33cfe08
+

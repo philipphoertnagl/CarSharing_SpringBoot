@@ -20,5 +20,10 @@ public class BillingService {
     public void receiveEmergencyMessage(String message) throws InterruptedException {
         log.info("Received message from EmergencyQueue: {}", message);
     }
+
+    @RabbitListener(queues = "CreateInvoiceQueue")
+    public void receiveInvoiceMessage(String message) throws InterruptedException {
+        log.info("Received message from InvoiceQuueue: {}", message);
+    }
 }
 
