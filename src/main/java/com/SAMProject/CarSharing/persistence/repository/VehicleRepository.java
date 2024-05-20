@@ -57,4 +57,17 @@ public class VehicleRepository {
         }
         return null;
     }
+
+    public Vehicle findVehicleByUserID(Integer UserID) {
+        for (Vehicle vehicle : vehicleList) {
+            if (vehicle.getStatusDetails().getCurrentDriver().getId() == UserID && vehicle.getStatusDetails() != null) {
+                return vehicle;
+            } else {
+                System.out.println("This User seems to have no rented carss");
+            }
+        }
+        return null;
+    }
+
+
 }

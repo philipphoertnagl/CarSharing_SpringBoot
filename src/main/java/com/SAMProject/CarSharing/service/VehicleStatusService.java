@@ -31,7 +31,7 @@ public class VehicleStatusService {
         this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<?> sendStatus(Integer id, StatusDetails statusDetails, String authHeader) {
+    public ResponseEntity<?> sendStatus(Integer id, StatusDetails newStatusDetails, String authHeader) {
         String vehicleToken = authHeader.substring(7);
         Vehicle vehicle = vehicleRepository.findById(id);
         if (vehicle == null) {
@@ -40,8 +40,14 @@ public class VehicleStatusService {
         if(!vehicle.getVehicleToken().equals(vehicleToken)) {       //checking for matching VehicleToken!
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vehicle Token not matching with Token of VehicleID");
         }
-        vehicle.setStatusDetails(statusDetails);
-        processStatusUpdate(statusDetails);
+        StatusDetails existingStatusDetails = vehicle.getStatusDetails();
+        if (existingStatusDetails != null) {
+            newStatusDetails.setOccupyState(existingStatusDetails.getOccupyState());
+            newStatusDetails.setCurrentDriver(existingStatusDetails.getCurrentDriver());
+        }
+        vehicle.setStatusDetails(newStatusDetails);
+        processStatusUpdate(newStatusDetails);
+
         System.out.println("Vehicle: " + vehicle.getName() + " has new Status: " + vehicle.getStatusDetails());
         return ResponseEntity.ok().body("Vehicle: " + vehicle.getName() + " has new Status: " + vehicle.getStatusDetails());
     }
