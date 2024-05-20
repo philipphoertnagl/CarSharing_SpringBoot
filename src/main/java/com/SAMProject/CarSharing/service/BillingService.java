@@ -20,36 +20,50 @@ public class BillingService {
     private final UserRepository userRepository;
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper; //for RabbitMQ SimpleMessageConverter to convert to simple JSON
+    private final VehicleRepository vehicleRepository;
 
     @Autowired
-    public BillingService(UserRepository userRepository, RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
+    public BillingService(UserRepository userRepository, RabbitTemplate rabbitTemplate, ObjectMapper objectMapper, VehicleRepository vehicleRepository) {
         this.userRepository = userRepository;
         this.rabbitTemplate = rabbitTemplate;
         this.objectMapper = objectMapper;
+        this.vehicleRepository = vehicleRepository;
     }
 
     public ResponseEntity<?> createInvoice(Integer id, String authHeader) {
         String token = authHeader.substring(7);
         String username = TokenStorage.getUsernameForToken(token);
-
         if (username != null && userRepository.findByUsername(username).getRole().equals(User.Role.MANAGER)) {
             User customer = userRepository.findById(id);
-            // TODO: implementation ob und welches Vehicle dem User zugewiesen ist
-            BillingInvoice newInvoice = new BillingInvoice(100.00, customer.getUsername());
-            processInvoice(newInvoice);
-            return ResponseEntity.ok().body("A new invoice for user " + customer.getUsername() + " was created and gets processed ....");
-        }
-        else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("There is no user I can create an invoice for");
+            if (customer != null) {
+                Vehicle vehicleDetails = vehicleRepository.findVehicleByUserID(customer.getId()); // check if customer has selected a vehicle
+                if (vehicleDetails != null && vehicleDetails.getStatusDetails() != null) {
+                    StatusDetails vehicleStatusDetails = vehicleDetails.getStatusDetails();
+                    processInvoice(vehicleStatusDetails); //sending to the InvoiceQUEUE
+                    return ResponseEntity.ok().body("A new invoice for user " + customer.getUsername() + " with User ID "
+                            + customer.getId() + " was created and gets processed ....");
+                } else {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No vehicle or status details found for the user");
+                }
+
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Such a user is not in the database");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not a MANAGER!");
         }
     }
 
-    public void processInvoice(BillingInvoice billingInvoice) {
-        try {
-            String toJson = objectMapper.writeValueAsString(billingInvoice);
-            rabbitTemplate.convertAndSend("CreateInvoiceQueue", toJson);
-        } catch (JsonProcessingException e) {
-            System.out.println("Problem with converting Object to JSON format (Objectmapper)");
+
+    public void processInvoice(StatusDetails statusDetails){
+            try {
+                String toJson = objectMapper.writeValueAsString(statusDetails);
+                rabbitTemplate.convertAndSend("CreateInvoiceQueue", toJson);
+            } catch (JsonProcessingException e) {
+                System.out.println("Problem with converting Object to JSON format (Objectmapper)");
+            }
         }
     }
-}
+
+
+

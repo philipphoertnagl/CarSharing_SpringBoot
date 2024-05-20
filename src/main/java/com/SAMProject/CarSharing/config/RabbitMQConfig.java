@@ -19,7 +19,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue updateStatusQueue() {
-        return new Queue(UPDATE_STATUS_QUEUE, true);
+        return new Queue(UPDATE_STATUS_QUEUE, false);
     }
 
     @Bean
