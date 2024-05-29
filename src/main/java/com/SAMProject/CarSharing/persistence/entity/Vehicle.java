@@ -1,9 +1,21 @@
 package com.SAMProject.CarSharing.persistence.entity;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
+@Entity
 public class Vehicle {
-    private String name;
-    private String description;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @NotBlank(message = "Car needs a name")
+    @Column(name = "name", nullable = false, unique = false)
+    private String name;
+    @Column(name = "description", nullable = false, unique = false)
+    private String description;
+
+    @OneToOne
     private StatusDetails statusDetails;
     private String vehicleToken;
 
