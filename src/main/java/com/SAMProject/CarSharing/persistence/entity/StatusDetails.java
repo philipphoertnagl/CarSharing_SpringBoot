@@ -1,10 +1,19 @@
 package com.SAMProject.CarSharing.persistence.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class StatusDetails {
+
+    @Column
     private double longitude;
+
+    @Column
     private double latitude;
+
     private LocalDateTime currentTimeStamp;
     private OccupyState occupyState;
     private User currentDriver;
