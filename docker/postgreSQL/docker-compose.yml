@@ -5,8 +5,8 @@ services:
     build: db/.
     environment:
       POSTGRES_DB: carsharing
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
     # volumes:
     #  - ./docker-data/postgres/:/data/postgres

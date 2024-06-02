@@ -10,7 +10,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Username required")
     @Column(name = "username", nullable = false, unique = true)
@@ -59,7 +59,7 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
