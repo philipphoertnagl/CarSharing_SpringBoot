@@ -4,19 +4,22 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
+@Table(name = "vehicles")
 public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotBlank(message = "Car needs a name")
-    @Column(name = "name", nullable = false, unique = false)
+    @Column(nullable = false, unique = false)
     private String name;
-    @Column(name = "description", nullable = false, unique = false)
+    @Column(nullable = false, unique = false)
     private String description;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "status_details_id", referencedColumnName = "id")
     private StatusDetails statusDetails;
+
     private String vehicleToken;
 
     public Vehicle() {

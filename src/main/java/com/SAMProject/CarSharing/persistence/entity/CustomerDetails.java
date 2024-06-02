@@ -3,6 +3,7 @@ package com.SAMProject.CarSharing.persistence.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "customer_details")
 public class CustomerDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

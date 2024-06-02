@@ -5,6 +5,7 @@ import com.SAMProject.CarSharing.persistence.entity.CustomerDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
 import com.SAMProject.CarSharing.persistence.repository.UserRepository;
+import com.SAMProject.CarSharing.persistence.repository.UserRepositoryJakarta;
 import com.SAMProject.CarSharing.security.TokenStorage;
 import com.SAMProject.CarSharing.security.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,18 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
+    private final UserRepositoryJakarta userRepositoryJakarta;
 
-    @Autowired
+    /*@Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }*/ //TODO
+
+
+    @Autowired
+    public UserService(UserRepositoryJakarta userRepositoryJakarta) {
+        this.userRepositoryJakarta = userRepositoryJakarta;
     }
 
 
