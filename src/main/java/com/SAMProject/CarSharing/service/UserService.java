@@ -27,13 +27,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    //private final UserRepository userRepository;
-    private final UserRepositoryJakarta userRepositoryJakarta;
 
-    /*@Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }*/ //TODO
+    private final UserRepositoryJakarta userRepositoryJakarta;
 
 
     @Autowired
