@@ -1,19 +1,42 @@
 package com.SAMProject.CarSharing.persistence.entity;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
+
+@Entity
+@Table(name = "users")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @NotBlank(message = "Username required")
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
+    @NotBlank(message = "Password is required")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    private int id;
 
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
 
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "customer_details_id", referencedColumnName = "id", nullable = true)
     private CustomerDetails customerDetails;
+
 
 
     public enum Role {
         CUSTOMER, MANAGER;
     }
+
+    public User() {}
 
     public User(String username, String password) {
         this.username = username;
@@ -36,7 +59,7 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

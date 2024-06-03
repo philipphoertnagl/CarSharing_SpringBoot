@@ -1,15 +1,31 @@
 package com.SAMProject.CarSharing.persistence.entity;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "status_details")
 public class StatusDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     private double longitude;
     private double latitude;
     private LocalDateTime currentTimeStamp;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OccupyState occupyState;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "current_driver_id")
     private User currentDriver;
+
     private long distanceSinceLastUpdate;
     private long timeSinceLastUpdate;       //in sec
+
 
     public enum OccupyState {
         FREE,

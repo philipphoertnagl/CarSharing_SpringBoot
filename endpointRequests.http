@@ -27,7 +27,7 @@ Content-Type: application/json
 # Request for REGISTERING a new VEHICLE (requires Manager token!)
 POST http://localhost:8080/api/vehicles
 Content-Type: application/json
-Authorization: Bearer c4cef5b9-3cde-4dce-93fb-891308a75aba
+Authorization: Bearer cd8019f9-28c9-4dd0-aacf-f0d870b28792
 
 
 {
@@ -46,7 +46,7 @@ Authorization: Bearer c4cef5b9-3cde-4dce-93fb-891308a75aba
 
 POST http://localhost:8080/api/devices/1/status
 Content-Type: application/json
-Authorization: Bearer 16a92169-a138-4564-9f88-5d75a6a9efd8
+Authorization: Bearer a30175a0-b4c2-4102-a356-40b7f9f56a66
 
 {
         "longitude": 48.239189,
@@ -79,7 +79,7 @@ Authorization: Bearer 36db8826-4496-4463-bf41-2394088c3c83
 
 POST http://localhost:8080/api/invoices/1
 Content-Type: application/json
-Authorization: Bearer c4cef5b9-3cde-4dce-93fb-891308a75aba
+Authorization: Bearer cd8019f9-28c9-4dd0-aacf-f0d870b28792
 
 
 ###

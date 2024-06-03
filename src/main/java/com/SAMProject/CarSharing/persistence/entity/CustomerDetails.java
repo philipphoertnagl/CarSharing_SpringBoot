@@ -1,12 +1,30 @@
 package com.SAMProject.CarSharing.persistence.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "customer_details")
 public class CustomerDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "first_name", nullable = false)
     private String firstName;
+
+    @Column(name = "surname", nullable = false)
     private String surname;
+
+    @Column(name = "age", nullable = false)
     private int age;
+
+    @Column(name = "driving_license", nullable = false)
     private String drivingLicense;
+
+    @Column(name = "cc_number", nullable = false)
     private int ccNumber;
 
+    public CustomerDetails() {}
 
     public CustomerDetails(String firstName, String surname, int age, String drivingLicense, int ccNumber) {
         this.firstName = firstName;

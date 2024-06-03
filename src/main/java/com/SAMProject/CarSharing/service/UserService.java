@@ -1,10 +1,12 @@
 package com.SAMProject.CarSharing.service;
 
 import com.SAMProject.CarSharing.dto.LoginRequest;
+import com.SAMProject.CarSharing.dto.UserDTO;
 import com.SAMProject.CarSharing.persistence.entity.CustomerDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
 import com.SAMProject.CarSharing.persistence.repository.UserRepository;
+import com.SAMProject.CarSharing.persistence.repository.UserRepositoryJakarta;
 import com.SAMProject.CarSharing.security.TokenStorage;
 import com.SAMProject.CarSharing.security.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +17,28 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
+    private final UserRepositoryJakarta userRepositoryJakarta;
 
-    @Autowired
+    /*@Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }*/ //TODO
+
+
+    @Autowired
+    public UserService(UserRepositoryJakarta userRepositoryJakarta) {
+        this.userRepositoryJakarta = userRepositoryJakarta;
     }
 
 
@@ -33,7 +46,7 @@ public class UserService {
         if (user.getRole() == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You need to select if the new user is a MANAGER or CUSTOMER");
         }
-        User savedUser = userRepository.saveOrUpdate(user);
+        User savedUser = userRepositoryJakarta.save(user);
 
         if (savedUser.getRole() == User.Role.CUSTOMER) {
             System.out.println("New Customer registered: "
@@ -49,11 +62,11 @@ public class UserService {
     }
 
     public ResponseEntity<?> loginUser(LoginRequest loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername());
-        if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
+        Optional<User> user = userRepositoryJakarta.findByUsername(loginRequest.getUsername());
+        if (user.isPresent() && user.get().getPassword().equals(loginRequest.getPassword())) {
             String token = TokenUtil.generateToken();
-            TokenStorage.storeToken(token, user.getUsername());
-            System.out.printf("User: " + user.getUsername() + " logged in. UserToken: %s%n", token); //console outpu just for testing
+            TokenStorage.storeToken(token, user.get().getUsername());
+            System.out.printf("User: " + user.get().getUsername() + " logged in. UserToken: %s%n", token); //console outpu just for testing
             return ResponseEntity.ok().body(Collections.singletonMap("token", token));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
@@ -74,39 +87,56 @@ public class UserService {
     }
 
     public ResponseEntity<?> returnAllUser(String authHeader) {
-        String token = authHeader.substring(7);
+        String token = authHeader.substring(7); // Assuming authHeader follows the format "Bearer <token>"
         String username = TokenStorage.getUsernameForToken(token);
 
-        if (username != null && userRepository.findByUsername(username).getRole().equals(User.Role.MANAGER)) {
-            List<User> users = userRepository.allUsers();
-            return ResponseEntity.ok(users);
+        Optional<User> user = userRepositoryJakarta.findByUsername(username);
+        if (user.isPresent() && user.get().getRole() == User.Role.MANAGER) {
+            List<User> users = userRepositoryJakarta.findAll();
+
+            List<UserDTO> userDTOs = new ArrayList<>();  // ohne DTO classe bekomm ich komische hibernate/jackson fehler...
+            for (User u : users) {
+                UserDTO dto = new UserDTO(u.getUsername(), u.getRole().toString(), u.getId());
+                userDTOs.add(dto);
+            }
+            return ResponseEntity.ok(userDTOs);
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Token not permitted to see all Users (only Managers)");
         }
     }
 
 
     public ResponseEntity<?> updateUser(Integer id, User updatedUser, String authHeader) {
-        String token = authHeader.substring(7);
-        String username = TokenStorage.getUsernameForToken(token);
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token, something wrong (User does not exist?!)");
+        String username = TokenStorage.getUsernameForToken(authHeader.substring(7));
+        User authUser = userRepositoryJakarta.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token or user does not exist"));
+        User existingUser = userRepositoryJakarta.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (!authUser.getRole().equals(User.Role.MANAGER) && !authUser.getId().equals(existingUser.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update this user. Only managers can.");
         }
-        User existingUser = userRepository.findById(id);
-        updatedUser.setId(id);  //!wichtig!
-        updatedUser.setRole(existingUser.getRole());
-        // Save CustomerDetails of updated Customer:
-        CustomerDetails updatedDetails = updatedUser.getCustomerDetails(); //to not have to send the role info in the JSON body again
-        if (user.getRole().equals(User.Role.MANAGER) || user.getId() == id) {
-            if (updatedUser.getRole() == User.Role.CUSTOMER) {
-                updatedUser.setCustomerDetails(updatedDetails); //set customerDetails from updated Customer
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setPassword(updatedUser.getPassword());
+
+        if (existingUser.getRole() == User.Role.CUSTOMER) {
+            CustomerDetails updatedDetails = updatedUser.getCustomerDetails();
+            if (updatedDetails != null) {
+                if (existingUser.getCustomerDetails() != null) {
+                    // update only fields when changed
+                    CustomerDetails existingDetails = existingUser.getCustomerDetails();
+                    existingDetails.setFirstName(updatedDetails.getFirstName());
+                    existingDetails.setSurname(updatedDetails.getSurname());
+                    existingDetails.setAge(updatedDetails.getAge());
+                    existingDetails.setDrivingLicense(updatedDetails.getDrivingLicense());
+                    existingDetails.setCcNumber(updatedDetails.getCcNumber());
+                } else {
+                    existingUser.setCustomerDetails(updatedDetails);
+                }
             }
-            userRepository.saveOrUpdate(updatedUser);
-            return ResponseEntity.ok().body("User: " + updatedUser.getUsername() + " updated");
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update this user.(Only manager can change other users data");
         }
+        userRepositoryJakarta.save(existingUser);
+        return ResponseEntity.ok().body("User: " + existingUser.getUsername() + " updated");
     }
 
 }
