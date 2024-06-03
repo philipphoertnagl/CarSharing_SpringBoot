@@ -1,6 +1,7 @@
 package com.SAMProject.CarSharing.service;
 
 import com.SAMProject.CarSharing.dto.LoginRequest;
+import com.SAMProject.CarSharing.dto.UserDTO;
 import com.SAMProject.CarSharing.persistence.entity.CustomerDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -84,17 +87,24 @@ public class UserService {
     }
 
     public ResponseEntity<?> returnAllUser(String authHeader) {
-        String token = authHeader.substring(7);
+        String token = authHeader.substring(7); // Assuming authHeader follows the format "Bearer <token>"
         String username = TokenStorage.getUsernameForToken(token);
 
         Optional<User> user = userRepositoryJakarta.findByUsername(username);
-        if (user.isPresent() && user.get().getRole().equals(User.Role.MANAGER)) {
+        if (user.isPresent() && user.get().getRole() == User.Role.MANAGER) {
             List<User> users = userRepositoryJakarta.findAll();
-            return ResponseEntity.ok(users);
+
+            List<UserDTO> userDTOs = new ArrayList<>();  // ohne DTO classe bekomm ich komische hibernate/jackson fehler...
+            for (User u : users) {
+                UserDTO dto = new UserDTO(u.getUsername(), u.getRole().toString(), u.getId());
+                userDTOs.add(dto);
+            }
+            return ResponseEntity.ok(userDTOs);
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Token not permitted to see all Users (only Managers)");
         }
     }
+
 
 
     /*public ResponseEntity<?> updateUser(Integer id, User updatedUser, String authHeader) {
@@ -130,20 +140,34 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         if (!authUser.getRole().equals(User.Role.MANAGER) && !authUser.getId().equals(existingUser.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update this user. Only managers can change other users' data or users can update their own data.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update this user. Only managers can.");
         }
 
-        // Update mutable fields
+        // Update basic user details
         existingUser.setUsername(updatedUser.getUsername());
         existingUser.setPassword(updatedUser.getPassword());
 
+        // Check and update customer details only if needed
         if (existingUser.getRole() == User.Role.CUSTOMER) {
-            existingUser.setCustomerDetails(updatedUser.getCustomerDetails());
+            CustomerDetails updatedDetails = updatedUser.getCustomerDetails();
+            if (updatedDetails != null) {
+                if (existingUser.getCustomerDetails() != null) {
+                    // Update existing CustomerDetails
+                    CustomerDetails existingDetails = existingUser.getCustomerDetails();
+                    existingDetails.setFirstName(updatedDetails.getFirstName());
+                    existingDetails.setSurname(updatedDetails.getSurname());
+                    existingDetails.setAge(updatedDetails.getAge());
+                    existingDetails.setDrivingLicense(updatedDetails.getDrivingLicense());
+                    existingDetails.setCcNumber(updatedDetails.getCcNumber());
+                } else {
+                    // Set new CustomerDetails if there were none before
+                    existingUser.setCustomerDetails(updatedDetails);
+                }
+            }
         }
 
         userRepositoryJakarta.save(existingUser);
         return ResponseEntity.ok().body("User: " + existingUser.getUsername() + " updated");
     }
-
 
 }
