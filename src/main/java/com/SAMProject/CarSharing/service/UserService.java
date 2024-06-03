@@ -106,53 +106,24 @@ public class UserService {
     }
 
 
-
-    /*public ResponseEntity<?> updateUser(Integer id, User updatedUser, String authHeader) {
-        String token = authHeader.substring(7);
-        String username = TokenStorage.getUsernameForToken(token);
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token, something wrong (User does not exist?!)");
-        }
-        User existingUser = userRepository.findById(id);
-        updatedUser.setId(id);  //!wichtig!
-        updatedUser.setRole(existingUser.getRole());
-        // Save CustomerDetails of updated Customer:
-        CustomerDetails updatedDetails = updatedUser.getCustomerDetails(); //to not have to send the role info in the JSON body again
-        if (user.getRole().equals(User.Role.MANAGER) || user.getId() == id) {
-            if (updatedUser.getRole() == User.Role.CUSTOMER) {
-                updatedUser.setCustomerDetails(updatedDetails); //set customerDetails from updated Customer
-            }
-            userRepository.saveOrUpdate(updatedUser);
-            return ResponseEntity.ok().body("User: " + updatedUser.getUsername() + " updated");
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update this user.(Only manager can change other users data");
-        }
-    }*/
-
     public ResponseEntity<?> updateUser(Integer id, User updatedUser, String authHeader) {
         String username = TokenStorage.getUsernameForToken(authHeader.substring(7));
-
         User authUser = userRepositoryJakarta.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token or user does not exist"));
-
         User existingUser = userRepositoryJakarta.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         if (!authUser.getRole().equals(User.Role.MANAGER) && !authUser.getId().equals(existingUser.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update this user. Only managers can.");
         }
-
-        // Update basic user details
         existingUser.setUsername(updatedUser.getUsername());
         existingUser.setPassword(updatedUser.getPassword());
 
-        // Check and update customer details only if needed
         if (existingUser.getRole() == User.Role.CUSTOMER) {
             CustomerDetails updatedDetails = updatedUser.getCustomerDetails();
             if (updatedDetails != null) {
                 if (existingUser.getCustomerDetails() != null) {
-                    // Update existing CustomerDetails
+                    // update only fields when changed
                     CustomerDetails existingDetails = existingUser.getCustomerDetails();
                     existingDetails.setFirstName(updatedDetails.getFirstName());
                     existingDetails.setSurname(updatedDetails.getSurname());
@@ -160,12 +131,10 @@ public class UserService {
                     existingDetails.setDrivingLicense(updatedDetails.getDrivingLicense());
                     existingDetails.setCcNumber(updatedDetails.getCcNumber());
                 } else {
-                    // Set new CustomerDetails if there were none before
                     existingUser.setCustomerDetails(updatedDetails);
                 }
             }
         }
-
         userRepositoryJakarta.save(existingUser);
         return ResponseEntity.ok().body("User: " + existingUser.getUsername() + " updated");
     }
