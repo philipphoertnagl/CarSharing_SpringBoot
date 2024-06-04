@@ -1,19 +1,11 @@
 package com.SAMProject.CarSharing.controller;
 
 import com.SAMProject.CarSharing.dto.UsernameOccupyVehicle;
-import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
-import com.SAMProject.CarSharing.persistence.entity.User;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
-import com.SAMProject.CarSharing.persistence.repository.VehicleRepository;
-import com.SAMProject.CarSharing.security.TokenStorage;
-import com.SAMProject.CarSharing.service.UserService;
 import com.SAMProject.CarSharing.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class VehicleController {

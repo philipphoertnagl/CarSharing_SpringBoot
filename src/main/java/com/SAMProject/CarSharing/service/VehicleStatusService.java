@@ -1,11 +1,10 @@
 package com.SAMProject.CarSharing.service;
 
 import com.SAMProject.CarSharing.dto.EmergencyInfo;
-import com.SAMProject.CarSharing.persistence.entity.BillingInvoice;
 import com.SAMProject.CarSharing.persistence.entity.EmergencyDetails;
 import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
-import com.SAMProject.CarSharing.persistence.repository.VehicleRepository;
+import com.SAMProject.CarSharing.persistence.repositoryOld.VehicleRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class VehicleStatusService {

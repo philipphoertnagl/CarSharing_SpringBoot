@@ -1,4 +1,4 @@
-package com.SAMProject.CarSharing.persistence.repository;
+package com.SAMProject.CarSharing.persistence.repositoryOld;
 
 
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
