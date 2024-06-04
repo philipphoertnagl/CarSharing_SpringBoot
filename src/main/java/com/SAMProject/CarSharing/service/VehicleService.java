@@ -80,12 +80,6 @@ public class VehicleService {
         if (user.isEmpty() || user.get().getRole() != User.Role.MANAGER) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid token, something wrong (User does not exist?!)");
         }
-        /*
-        updatedVehicle.setId(id);
-        Vehicle newUpdatedVehicle = vehicleRepository.save(updatedVehicle);
-        System.out.println(newUpdatedVehicle);
-         */
-
         Vehicle existingVehicle = vehicleRepositoryJakarta.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vehicle not found"));
 
@@ -146,9 +140,8 @@ public class VehicleService {
             StatusDetails existingStatusDetails = vehicle.get().getStatusDetails();
             existingStatusDetails.setOccupyState(StatusDetails.OccupyState.OCCUPIED);
             existingStatusDetails.setCurrentDriver(user.get());
-            vehicle.get().setStatusDetails(existingStatusDetails);
-            vehicleRepositoryJakarta.save(vehicle.get()); //eig nicht gebraucht, aber vlt später wenn DBS
         }
+        //vehicleRepositoryJakarta.save(vehicle.get());
         System.out.println(user.get().getUsername() + " rented the car " + vehicle.get().getName() + " with ID " + vehicle.get().getId() + " and the details " + vehicle.get().getStatusDetails());
         return ResponseEntity.ok().body("Vehicle with ID: " + vehicleID + " was rented by User " + user.get().getUsername() + " wih User ID: " + user.get().getId());
     }
