@@ -2,7 +2,6 @@ package com.SAMProject.CarSharing.controller;
 
 import com.SAMProject.CarSharing.persistence.entity.CustomerDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
-import com.SAMProject.CarSharing.persistence.repository.UserRepository;
 import com.SAMProject.CarSharing.dto.LoginRequest;
 import com.SAMProject.CarSharing.security.TokenStorage;
 import com.SAMProject.CarSharing.security.TokenUtil;

@@ -5,7 +5,6 @@ import com.SAMProject.CarSharing.persistence.entity.BillingInvoice;
 import com.SAMProject.CarSharing.persistence.entity.EmergencyDetails;
 import com.SAMProject.CarSharing.persistence.entity.StatusDetails;
 import com.SAMProject.CarSharing.persistence.entity.Vehicle;
-import com.SAMProject.CarSharing.persistence.repository.UserRepository;
 import com.SAMProject.CarSharing.persistence.repository.VehicleRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
