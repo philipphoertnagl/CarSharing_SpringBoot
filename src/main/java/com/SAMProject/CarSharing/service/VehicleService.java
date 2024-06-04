@@ -118,9 +118,14 @@ public class VehicleService {
         if (user.isEmpty() || user.get().getRole() != User.Role.MANAGER) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid token, something wrong (User does not exist?!)");
         } else {
-            vehicleRepositoryJakarta.deleteById(id);
-            System.out.println("Vehicle with ID: " + id + "from List deleted");
-            return ResponseEntity.ok().body("Vehicle with ID: " + id + " from List deleted");
+            Optional<Vehicle> vehicle = vehicleRepositoryJakarta.findById(id);
+            if (vehicle.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle ID not found");
+            } else {
+                vehicleRepositoryJakarta.deleteById(id);
+                System.out.println("Vehicle with ID: " + id + " from List deleted. Vehicle ( " + vehicle.get().getName() + " )");
+                return ResponseEntity.ok().body("Vehicle with ID: " + id + " from List deleted");
+            }
         }
     }
 
