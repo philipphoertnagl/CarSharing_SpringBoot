@@ -4,36 +4,24 @@ import com.SAMProject.CarSharing.dto.LoginRequest;
 import com.SAMProject.CarSharing.dto.UserDTO;
 import com.SAMProject.CarSharing.persistence.entity.CustomerDetails;
 import com.SAMProject.CarSharing.persistence.entity.User;
-import com.SAMProject.CarSharing.persistence.entity.Vehicle;
-import com.SAMProject.CarSharing.persistence.repository.UserRepository;
-import com.SAMProject.CarSharing.persistence.repository.UserRepositoryJakarta;
+import com.SAMProject.CarSharing.persistence.jpa.UserRepositoryJakarta;
 import com.SAMProject.CarSharing.security.TokenStorage;
 import com.SAMProject.CarSharing.security.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    //private final UserRepository userRepository;
-    private final UserRepositoryJakarta userRepositoryJakarta;
 
-    /*@Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }*/ //TODO
+    private final UserRepositoryJakarta userRepositoryJakarta;
 
 
     @Autowired
